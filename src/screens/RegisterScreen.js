@@ -17,16 +17,20 @@ import {
 import FireBase from '../services/firebase'
 
 const RegisterScreen = ({ navigation }) => {
+  //PROPRIEDADES DO FORM
   const [name, setName] = useState({ value: '', error: '' });
   const [email, setEmail] = useState({ value: '', error: '' });
   const [sex, setSex] = useState({ value: '', error: '' });
 
+  //FUNÇÃO AO GRAVAR FORM
   const _onSignUpPressed = () => {
 
+    //APLICANDO VALIDADORES
     const nameError = nameValidator(name.value);
     const emailError = emailValidator(email.value);
     const sexError = sexValidator(sex.value);
 
+    //VERIFICANDO VALIDAÇÃO
     if (emailError || sexError || nameError) {
       setName({ ...name, error: nameError });
       setEmail({ ...email, error: emailError });
@@ -34,44 +38,48 @@ const RegisterScreen = ({ navigation }) => {
       return;
     }
 
+    //CRIANDO ID DO USUÁRIO COM BASE NO EMAIL
     let userId = base64.encode(email.value);
 
+    //CHECANDO EXISTÊNCIA DO USUÁRIO
     var user = FireBase.database().ref('users/' + userId + '/email');
     user.once('value', function(data) {
       if(data.val() != null){
         setEmail({ ...email, error: 'Email já cadastrado!' });
         return;
       }else{
-        console.log(name.value)
-        console.log(sex.value)
-        console.log(email.value)
-        console.log(userId)
 
+        //CHECANDO PLATAFORMA
         if (Platform.OS !== 'web') {
+          //REQUISITANDO ACESSO A CÂMERA
           ImagePicker.requestCameraPermissionsAsync().then(function(status){
             if (!status.granted) {
               alert('Precisamos de permissão para sua câmera para poder continuar!');
             }else{
+              //ABRINDO CÂMERA
               ImagePicker.launchCameraAsync({
                 allowsEditing: false,
                 quality: 0.4
               }).then(function(data){
                 if(!data.cancelled){
-
+                  //CAPTURANDO BLOB DA IMAGEM A PARTIR DO URI
                   fetch(data.uri).then(function(imageData){
                     imageData.blob().then(function(blob){
-
+                      //CRIANDO REFERÊNCIA NO FIREBASE
                       var photoRef = FireBase.storage().ref().child(`photos/${userId}.jpg`);
 
+                      //UPLOAD DA FOTO DE CADASTRO
                       photoRef.put(blob, {contentType:'image/jpg'}).then(function() {
                         console.log('Photo uploaded!')
 
+                        //SALANDO DADOS NO FIREBASE
                         FireBase.database().ref('users/' + userId).set({
                           name: name.value,
                           email: email.value,
                           sex : sex.value,
                         });
                 
+                        //EMPURRANDO USUÁRIO A DASHBOARD
                         navigation.navigate('Dashboard');
 
                       });

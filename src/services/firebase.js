@@ -1,5 +1,6 @@
 import firebase from 'firebase';
 
+//CONFIGURAÇÕES DE ACESSO AO FIREBASE
 const FirebaseConfig = {
     apiKey: "AIzaSyCcbE3JWVerh7DzMM3QqKiuUfstEfYpBD0",
     authDomain: "loginlanlink.firebaseapp.com",
@@ -11,6 +12,7 @@ const FirebaseConfig = {
 
 };
 
+//INICIALIZANDO SERVIÇO
 const FireBase = firebase.initializeApp(FirebaseConfig)
 
 export default FireBase;
