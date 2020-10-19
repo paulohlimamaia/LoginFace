@@ -1,6 +1,4 @@
-# React Native Simple Login Template
-
-**react-native-login-template**
+# React Native Login 
 
 ## How to use?
 
