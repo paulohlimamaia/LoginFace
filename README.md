@@ -12,6 +12,8 @@
 npm install
 // or
 yarn install
+// and
+expo install
 ```
 
 3. Run project.
